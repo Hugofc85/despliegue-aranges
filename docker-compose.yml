@@ -1,0 +1,55 @@
+services:
+
+  # Frontend (Ionic/Angular)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aranges-frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - aranges-network
+
+  mysql:
+    image: mysql:8
+    container_name: aranges-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: AranGes
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d/
+      - mysql_data:/var/lib/mysql
+    networks:
+      - aranges-network
+
+  # Backend (Spring Boot)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aranges-backend
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/AranGes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8000:8080"
+    networks:
+      - aranges-network
+    volumes:
+      - ./images:/app/images # Montar imágenes dentro del contenedor
+
+volumes:
+  mysql_data:
+networks:
+  aranges-network:
