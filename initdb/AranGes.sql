@@ -114,6 +114,3 @@ SET @last_user_id = LAST_INSERT_ID();
 ALTER TABLE `AranGes`.`producto_encargo` 
 CHANGE COLUMN `cantidad` `cantidad` DECIMAL(10,4) NULL ;
 
-ALTER TABLE `AranGes`.`encargos` 
-DROP COLUMN `fecha_prevista`,
-CHANGE COLUMN `fechaPrevista` `fecha_prevista` DATE NOT NULL ;
